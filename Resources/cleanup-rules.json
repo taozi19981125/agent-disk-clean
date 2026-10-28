@@ -1,0 +1,230 @@
+{
+  "version": 1,
+  "comment": "阿扫规则：App 和其他 agent 共用。risk = safe（可直接清，会自动重建）/ review（必须先问用户）/ report（只报告大小，绝不自动删）。mode = children：只处理 paths 下面的第一层条目，永远不删 paths 本身。",
+
+  "protected": [
+    { "path": "~/Documents", "reason": "用户文档" },
+    { "path": "~/Desktop", "reason": "用户桌面文件" },
+    { "path": "~/Pictures", "reason": "照片和「照片」图库" },
+    { "path": "~/Movies", "reason": "视频和剪辑工程" },
+    { "path": "~/Music", "reason": "音乐和 GarageBand/Logic 工程" },
+    { "path": "~/Library/Mobile Documents", "reason": "iCloud 云盘，删了会同步删除所有设备上的文件" },
+    { "path": "~/Library/CloudStorage", "reason": "Dropbox / Google Drive / OneDrive 等同步盘" },
+    { "path": "~/Library/Keychains", "reason": "钥匙串：密码、证书、签名身份" },
+    { "path": "~/Library/Mail", "reason": "邮件数据库" },
+    { "path": "~/Library/Messages", "reason": "iMessage 聊天记录和附件" },
+    { "path": "~/Library/Application Support", "reason": "各应用的数据和数据库（微信聊天记录、浏览器配置、App 存档等）" },
+    { "path": "~/Library/Containers", "reason": "沙盒应用的全部数据" },
+    { "path": "~/Library/Group Containers", "reason": "应用组共享数据（备忘录、微信、Office 等）" },
+    { "path": "~/Library/Preferences", "reason": "应用设置" },
+    { "path": "~/Library/Cookies", "reason": "登录状态" },
+    { "path": "~/Library/Safari", "reason": "Safari 书签和历史" },
+    { "path": "~/Library/Calendars", "reason": "日历数据" },
+    { "path": "~/Library/Photos", "reason": "照片相关数据" },
+    { "path": "~/Library/Accounts", "reason": "系统账户" },
+    { "path": "~/Library/Fonts", "reason": "用户安装的字体" },
+    { "path": "~/Library/LaunchAgents", "reason": "开机自启项，删错会让应用失效" },
+    { "path": "~/Library/Developer/Xcode/Archives", "reason": "App 归档和 dSYM，崩溃符号化需要" },
+    { "path": "~/Library/Developer/CoreSimulator/Devices", "reason": "模拟器里的数据和装好的 App" },
+    { "path": "~/Applications", "reason": "用户安装的应用" },
+    { "path": "~/Projects", "reason": "常见的代码项目文件夹" },
+    { "path": "~/Developer", "reason": "常见的代码项目文件夹" },
+    { "path": "~/Code", "reason": "常见的代码项目文件夹" },
+    { "path": "~/.ssh", "reason": "SSH 密钥" },
+    { "path": "~/.gnupg", "reason": "GPG 密钥" },
+    { "path": "~/.aws", "reason": "云账号凭据" },
+    { "path": "~/.kube", "reason": "集群凭据" },
+    { "path": "~/.docker", "reason": "Docker 配置和登录凭据" },
+    { "path": "~/.config", "reason": "命令行工具配置（含 gh、gcloud 等登录信息）" },
+    { "path": "~/.claude", "reason": "Claude Code 会话、记忆、设置" },
+    { "path": "~/.codex", "reason": "Codex 的登录、记忆、设置和生成的图片（只有 30 天前的对话记录在确认后可以删）" },
+    { "path": "~/.cursor", "reason": "Cursor 设置和扩展" },
+    { "path": "~/.vscode", "reason": "VS Code 扩展" },
+    { "path": "~/.local", "reason": "用户安装的命令行程序和数据（只有 Claude Code 的旧版本可以删）" },
+    { "path": "~/.ollama", "reason": "本地大模型文件，重新下载很慢" },
+    { "path": "/System", "reason": "系统文件（SIP 保护）" },
+    { "path": "/Library", "reason": "全局应用数据、驱动、系统扩展" },
+    { "path": "/Applications", "reason": "已安装应用，卸载要由用户自己做" },
+    { "path": "/usr", "reason": "系统命令" },
+    { "path": "/bin", "reason": "系统命令" },
+    { "path": "/sbin", "reason": "系统命令" },
+    { "path": "/opt", "reason": "Homebrew 等安装的程序" },
+    { "path": "/private", "reason": "系统数据库、虚拟内存交换文件、系统临时目录（/private/var/folders 由系统自己管理）" },
+    { "path": "/Volumes", "reason": "外接磁盘和 Time Machine 备份盘" }
+  ],
+
+  "protectedNames": [
+    ".git", ".ssh", ".gnupg", ".env", "Keychains", "MobileSync",
+    "Photos Library.photoslibrary", "Backups.backupdb", "*.sparsebundle", "*.vmwarevm", "*.pvm", "*.utm"
+  ],
+
+  "categories": [
+    {
+      "id": "user_caches",
+      "name": "应用缓存",
+      "risk": "safe",
+      "action": "delete",
+      "mode": "children",
+      "paths": ["~/Library/Caches"],
+      "exclude": ["com.apple.*", "CloudKit", "com.microsoft.*Office*", "FamilyCircle", "GeoServices", "ms-playwright"],
+      "description": "第三方应用的缓存（浏览器、Homebrew、pip、Yarn、CocoaPods、go-build 等）。下次打开对应应用时会自动重建，首次打开可能慢一点。",
+      "tip": "清之前最好先退出正在运行的大应用（浏览器、IDE）。苹果自家的 com.apple.* 缓存不碰，避免 iCloud 重新同步。"
+    },
+    {
+      "id": "user_logs",
+      "name": "旧日志",
+      "risk": "safe",
+      "action": "delete",
+      "mode": "children",
+      "paths": ["~/Library/Logs"],
+      "exclude": ["DiskClean"],
+      "minAgeDays": 7,
+      "description": "7 天前的应用日志和崩溃报告，只用于排查问题。"
+    },
+    {
+      "id": "xcode_derived",
+      "name": "Xcode 编译产物",
+      "risk": "safe",
+      "action": "delete",
+      "mode": "children",
+      "paths": ["~/Library/Developer/Xcode/DerivedData"],
+      "description": "Xcode 的编译中间文件和索引，下次编译时重建。"
+    },
+    {
+      "id": "simulator_caches",
+      "name": "模拟器缓存",
+      "risk": "safe",
+      "action": "delete",
+      "mode": "children",
+      "paths": ["~/Library/Developer/CoreSimulator/Caches"],
+      "description": "iOS 模拟器的动态缓存，不含模拟器里的数据。"
+    },
+    {
+      "id": "dev_package_caches",
+      "name": "开发包下载缓存",
+      "risk": "safe",
+      "action": "delete",
+      "mode": "children",
+      "paths": ["~/.npm/_cacache", "~/.bun/install/cache", "~/.cargo/registry/cache", "~/.gradle/caches", "~/.cache/pip", "~/.cache/uv"],
+      "description": "npm / bun / cargo / gradle / pip / uv 下载过的包的缓存。项目里已经装好的依赖不受影响，下次安装新包时重新下载。"
+    },
+    {
+      "id": "homebrew_cleanup",
+      "name": "Homebrew 旧版本",
+      "risk": "safe",
+      "action": "command",
+      "command": { "tools": ["/opt/homebrew/bin/brew", "/usr/local/bin/brew"], "args": ["cleanup", "--prune=all"] },
+      "description": "用 brew cleanup 删除已升级软件的旧版本和过期安装包，不卸载任何软件。"
+    },
+    {
+      "id": "ai_old_versions",
+      "name": "Claude Code 旧版本",
+      "risk": "safe",
+      "action": "delete",
+      "mode": "children",
+      "paths": ["~/.local/share/claude/versions"],
+      "keepNewest": 1,
+      "keepTargetsOf": ["~/.local/bin/claude"],
+      "description": "Claude Code 自动更新后留下的旧版本程序。正在用的版本和上一个版本永远保留（万一新版有问题还能退回）。"
+    },
+    {
+      "id": "xcode_device_support",
+      "name": "iOS 设备调试符号",
+      "risk": "review",
+      "action": "delete",
+      "mode": "children",
+      "paths": ["~/Library/Developer/Xcode/iOS DeviceSupport", "~/Library/Developer/Xcode/watchOS DeviceSupport"],
+      "description": "连接过的 iPhone/手表的系统符号，每个版本几 GB。删掉后再连接该设备时会重新拷贝（要等几分钟）。"
+    },
+    {
+      "id": "trash",
+      "name": "废纸篓",
+      "risk": "review",
+      "action": "delete",
+      "mode": "children",
+      "paths": ["~/.Trash"],
+      "description": "清空废纸篓，删除后无法找回。"
+    },
+    {
+      "id": "old_installers",
+      "name": "下载里的旧安装包",
+      "risk": "review",
+      "action": "trash",
+      "mode": "children",
+      "paths": ["~/Downloads"],
+      "match": ["*.dmg", "*.pkg", "*.iso", "*.xip"],
+      "minAgeDays": 30,
+      "description": "「下载」里 30 天前的 dmg / pkg / iso / xip 安装包。只移到废纸篓，不直接删除。"
+    },
+    {
+      "id": "agent_runtimes",
+      "name": "agent 用的浏览器和运行时",
+      "risk": "review",
+      "action": "delete",
+      "mode": "children",
+      "paths": ["~/Library/Caches/ms-playwright", "~/.cache/codex-runtimes"],
+      "description": "Playwright 浏览器、Codex 运行时等，agent 自动化要用。删了下次使用时会重新下载几百 MB，下载期间相关 agent 用不了。"
+    },
+    {
+      "id": "ai_old_sessions",
+      "name": "Codex 旧对话记录",
+      "risk": "review",
+      "action": "delete",
+      "mode": "children",
+      "paths": ["~/.codex/sessions"],
+      "depth": 2,
+      "minAgeDays": 30,
+      "description": "Codex 30 天前的对话记录，按月份删。删了以后这些旧对话在 Codex 里就打不开、不能接着聊了。（Claude Code 自己会自动删 30 天前的对话，不用管。）"
+    },
+    {
+      "id": "dev_model_caches",
+      "name": "其他工具缓存（~/.cache）",
+      "risk": "review",
+      "action": "delete",
+      "mode": "children",
+      "paths": ["~/.cache"],
+      "exclude": ["pip", "uv", "huggingface", "lm-studio", "whisper", "codex-runtimes"],
+      "description": "命令行工具的缓存目录。内容杂，可能有删了要重新下载很久的东西，所以需要确认。（HuggingFace / LM Studio 模型单独列在「本地大模型」里，不在这里删。）"
+    },
+    {
+      "id": "ios_backups",
+      "name": "iPhone / iPad 备份",
+      "risk": "report",
+      "mode": "children",
+      "paths": ["~/Library/Application Support/MobileSync/Backup"],
+      "description": "设备本地备份，可能是唯一一份。请在 Finder → 连接设备 → 管理备份里由你自己删除。"
+    },
+    {
+      "id": "xcode_archives",
+      "name": "Xcode 归档",
+      "risk": "report",
+      "mode": "children",
+      "paths": ["~/Library/Developer/Xcode/Archives"],
+      "description": "发布过的 App 归档，崩溃符号化需要。在 Xcode → Organizer 里自己挑旧的删。"
+    },
+    {
+      "id": "simulator_devices",
+      "name": "模拟器设备",
+      "risk": "report",
+      "mode": "children",
+      "paths": ["~/Library/Developer/CoreSimulator/Devices"],
+      "description": "装了 Xcode 的话可以运行 xcrun simctl delete unavailable 删掉已失效的模拟器。"
+    },
+    {
+      "id": "local_models",
+      "name": "本地大模型",
+      "risk": "report",
+      "mode": "children",
+      "paths": ["~/.ollama/models", "~/.cache/huggingface", "~/.cache/lm-studio", "~/.cache/whisper"],
+      "description": "本地 AI 模型文件，重新下载很慢。只能由用户在阿扫 app 的「AI 占用」页里逐个删除，agent 不能删。"
+    },
+    {
+      "id": "docker_data",
+      "name": "Docker 数据",
+      "risk": "report",
+      "mode": "children",
+      "paths": ["~/Library/Containers/com.docker.docker/Data"],
+      "description": "镜像、容器、数据卷。用 docker system df 查看，docker image prune 清理不用的镜像；数据卷里可能有数据库，不要动。"
+    }
+  ]
+}
