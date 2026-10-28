@@ -30,6 +30,22 @@
 
 ## 安装
 
+### 让 AI 帮你装（推荐）
+
+把这句话发给你的 Claude Code、Codex 或 Cursor：
+
+> 帮我安装 https://github.com/taozi19981125/agent-disk-clean ，按仓库里 skills/agent-disk-clean/SKILL.md 的步骤来
+
+它会自己下载、编译，装好后阿扫在「应用程序」里（`~/Applications/阿扫.app`），命令 `diskclean` 也能用了。
+
+也可以把它当 skill 装进 agent，以后说「帮我清一下磁盘」就会按规矩来：
+
+```bash
+npx skills add taozi19981125/agent-disk-clean
+```
+
+### 自己装
+
 需要 macOS 15 以上，并且装好 Xcode 或 Command Line Tools（Swift 6）。
 
 ```bash
